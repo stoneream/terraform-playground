@@ -1,5 +1,3 @@
-# TODO タグの付与
-
 provider "aws" {
   region = "ap-northeast-1"
 }
