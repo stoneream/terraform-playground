@@ -67,14 +67,16 @@ resource "aws_route_table" "private" {
   }
 }
 
+# EIPは静的なパブリックIPアドレスを付与するサービス
 resource "aws_eip" "nat_gateway" {
   domain     = "vpc"
   depends_on = [aws_internet_gateway.main]
 }
 
+# プライベートネットワークからインターネットへアクセスしたい場合はNATゲートウェイを使用する
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat_gateway.id
-  subnet_id     = aws_subnet.public.id
+  subnet_id     = aws_subnet.public.id # パブリックサブネットに配置する点に注意
   depends_on    = [aws_internet_gateway.main]
 }
 
