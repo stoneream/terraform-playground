@@ -17,13 +17,17 @@ resource "aws_route_table" "public" {
   }
 }
 
+# インターネットとの通信を可能にするためのルーティング設定
 resource "aws_route" "public" {
   route_table_id         = aws_route_table.public.id
-  gateway_id             = aws_internet_gateway.main.id
+  gateway_id             = aws_internet_gateway.main.id # インターネットゲートウェイを経由する
   destination_cidr_block = "0.0.0.0/0"
   depends_on             = [aws_internet_gateway.main]
 }
 
+# パブリックサブネットにルーティングテーブルを関連付ける
+# 特に指定しない場合は、デフォルトルートテーブルに関連付けされる
+# が、デフォルトルートテーブルの利用はアンチパターンとされている
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
