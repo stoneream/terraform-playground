@@ -30,7 +30,12 @@ aws --profile $PROFILE ec2 describe-instances
 # インスタンスIDをメモしておく
 # i-030507a1756a18bab
 
-# SSMのセッションマネージャーを開始する
-aws --profile $PROFILE ssm start-session --target i-030507a1756a18bab
+TARGET="i-0b944838b0d0e6b64"
 
+# SSMのセッションマネージャーを開始する
+aws --profile $PROFILE ssm start-session \
+--target $TARGET
+
+# ポートフォワーディング
+./bin/port-forward.sh $PROFILE $TARGET
 ```
