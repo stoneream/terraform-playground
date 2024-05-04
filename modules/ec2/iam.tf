@@ -1,6 +1,9 @@
 resource "aws_iam_role" "ec2" {
   name               = "ec2"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  managed_policy_arns = [
+    aws_iam_policy.s3_access.arn
+  ]
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -15,12 +18,29 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 data "aws_iam_policy" "policy_ssm_managed_instance_core" {
+  # https://docs.aws.amazon.com/ja_jp/aws-managed-policy/latest/reference/AmazonSSMManagedInstanceCore.html
   arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_iam_role_policy_attachment" "ssm_managed_instance_core" {
   policy_arn = data.aws_iam_policy.policy_ssm_managed_instance_core.arn
   role       = aws_iam_role.ec2.name
+}
+
+resource "aws_iam_policy" "s3_access" {
+  name   = "s3_access"
+  policy = data.aws_iam_policy_document.s3_access.json
+}
+
+data "aws_iam_policy_document" "s3_access" {
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket"
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_instance_profile" "profile_private_instance" {
