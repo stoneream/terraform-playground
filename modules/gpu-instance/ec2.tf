@@ -17,7 +17,7 @@ resource "aws_instance" "gpu_instance" {
 
   ebs_block_device {
     device_name = "/dev/sdf"
-    volume_id   = aws_ebs_volume.stable-diffusion.id
+    volume_id   = aws_ebs_volume.workspace.id
   }
 
   user_data = <<EOF
