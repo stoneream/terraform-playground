@@ -26,29 +26,6 @@ resource "aws_iam_role_policy_attachment" "ssm_managed_instance_core" {
   role       = aws_iam_role.ec2.name
 }
 
-# S3へのアクセス権限
-
-resource "aws_iam_policy" "s3_access" {
-  name   = "s3_access"
-  policy = data.aws_iam_policy_document.s3_access.json
-}
-
-data "aws_iam_policy_document" "s3_access" {
-  statement {
-    actions = [
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:ListBucket"
-    ]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "s3_access" {
-  policy_arn = aws_iam_policy.s3_access.arn
-  role       = aws_iam_role.ec2.name
-}
-
 resource "aws_iam_instance_profile" "profile_private_instance" {
   name = "profile_private_instance"
   role = aws_iam_role.ec2.name
