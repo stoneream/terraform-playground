@@ -1,10 +1,9 @@
 resource "aws_iam_role" "ec2" {
   name               = "ec2"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
-  managed_policy_arns = [
-    aws_iam_policy.s3_access.arn
-  ]
 }
+
+# SSM
 
 data "aws_iam_policy_document" "assume_role" {
   statement {
@@ -27,6 +26,8 @@ resource "aws_iam_role_policy_attachment" "ssm_managed_instance_core" {
   role       = aws_iam_role.ec2.name
 }
 
+# S3へのアクセス権限
+
 resource "aws_iam_policy" "s3_access" {
   name   = "s3_access"
   policy = data.aws_iam_policy_document.s3_access.json
@@ -41,6 +42,11 @@ data "aws_iam_policy_document" "s3_access" {
     ]
     resources = ["*"]
   }
+}
+
+resource "aws_iam_role_policy_attachment" "s3_access" {
+  policy_arn = aws_iam_policy.s3_access.arn
+  role       = aws_iam_role.ec2.name
 }
 
 resource "aws_iam_instance_profile" "profile_private_instance" {
