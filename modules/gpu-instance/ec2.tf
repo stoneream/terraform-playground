@@ -14,22 +14,6 @@ resource "aws_instance" "gpu_instance" {
   sudo apt-get update
   sudo add-apt-repository ppa:deadsnakes/ppa -y
   sudo apt-get -y install wget git tmux
-  sudo apt-get -y install python3 python-is-python3 python3-pip python3-venv
-  sudo apt-get -y install python3.10 python3.10-distutils python3.10-venv python3.10-tk
-  curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
-  python3.10 -m pip install --upgrade pip
-  sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
-
-  # stable-diffusion-webui
-  cd /home/ubuntu
-  sudo -u ubuntu git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
-  sudo -u ubuntu nohup bash -c 'bash <(wget -qO- https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh) &> sd-webui-log.txt' &
-
-  # file-browser
-  cd /home/ubuntu
-  sudo -u ubuntu curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
-  sudo -u ubuntu nohup bash -c 'filebrowser -r /home/ubuntu &> ./browser-log.txt' &
-
   EOF
 
   tags = {
