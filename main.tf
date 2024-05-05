@@ -19,7 +19,7 @@ module "ec2" {
 module "gpu-instance" {
   source = "./modules/gpu-instance"
 
-  enabled   = true
+  enabled   = false
   subnet_id = module.vpc.public_subnet_id
   vpc_id    = module.vpc.vpc_id
 
