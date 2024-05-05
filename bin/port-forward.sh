@@ -9,11 +9,11 @@ if [ -z "$PROFILE" ] || [ -z "$TARGET_INSTANCE" ]; then
 fi
 
 nohup aws --profile $PROFILE ssm start-session \
---target $TARGET \
+--target $TARGET_INSTANCE \
 --document-name AWS-StartPortForwardingSession \
 --parameters '{"portNumber":["7860"],"localPortNumber":["7860"]}' &
 
 nohup aws --profile $PROFILE ssm start-session \
---target $TARGET \
+--target $TARGET_INSTANCE \
 --document-name AWS-StartPortForwardingSession \
 --parameters '{"portNumber":["8080"],"localPortNumber":["8080"]}' &
