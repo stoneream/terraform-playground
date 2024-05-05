@@ -12,8 +12,3 @@ variable "iam_policy_arns" {
   description = "ロールにアタッチするIAMポリシーのARN"
   type        = set(string)
 }
-
-variable "instance_enabled" {
-  description = "GPUインスタンスを有効化するか"
-  type        = bool
-}

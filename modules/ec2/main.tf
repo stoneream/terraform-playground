@@ -1,8 +1,6 @@
 
 
 resource "aws_instance" "private_instance" {
-  count = var.enabled ? 1 : 0
-
   # Amazon Linux 2 AMI (HVM) - Kernel 5.10, SSD Volume Type
   ami                  = "ami-04e0b6d6cfa432943"
   instance_type        = "t2.micro"

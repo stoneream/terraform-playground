@@ -30,12 +30,14 @@ IAMユーザーにアクセスキーを発行し、`~/.aws/config`と`~/.aws/cre
 PROFILE=rishikawa
 
 # 接続するインスタンスの情報を取得する
-aws --profile $PROFILE ec2 describe-instances
+# インスタンス名 = gpu-instance & 状態 = 実行中
+aws --profile $PROFILE ec2 describe-instances \
+  --filters "Name=tag:Name,Values=gpu-instance" \
+  "Name=instance-state-name,Values=running" \
+  --query "Reservations[].Instances[].InstanceId" \
+  --output text
 
-# インスタンスIDをメモしておく
-# i-030507a1756a18bab
-
-TARGET="i-0b944838b0d0e6b64"
+TARGET="i-0feb81f54ca8dff75"
 
 # SSMのセッションマネージャーを開始する
 aws --profile $PROFILE ssm start-session \
@@ -43,4 +45,23 @@ aws --profile $PROFILE ssm start-session \
 
 # 7860と8080にポートフォワーディング (StableDiffusion用)
 ./bin/port-forward.sh $PROFILE $TARGET
+```
+
+## めも
+
+```bash
+# モジュール指定で操作する
+terraform [plan|apply|destroy] -target=module.[モジュール名]
+```
+
+```bash
+# modelをS3とSyncする
+PREFIX=hoge
+WORKSPACE=/home/ubuntu
+
+# S3 -> EC2
+aws s3 sync s3://$PREFIX-stable-diffusion/models $WORKSPACE/stable-diffusion-web-ui/models
+
+# EC2 -> S3
+aws s3 sync $WORKSPACE/stable-diffusion-webui/models s3://$PREFIX-stable-diffusion/models
 ```
