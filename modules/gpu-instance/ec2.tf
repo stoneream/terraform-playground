@@ -1,5 +1,5 @@
 resource "aws_instance" "gpu_instance" {
-  count = var.enabled ? 1 : 0
+  count = var.instance_enabled ? 1 : 0
 
   # Deep Learning Base OSS Nvidia Driver GPU AMI (Ubuntu 22.04) 20240501
   # https://aws.amazon.com/jp/releasenotes/aws-deep-learning-base-gpu-ami-ubuntu-22-04/
@@ -8,17 +8,6 @@ resource "aws_instance" "gpu_instance" {
   subnet_id            = var.subnet_id
   security_groups      = [aws_security_group.gpu_instance.id]
   iam_instance_profile = aws_iam_instance_profile.profile_gpu_instance.name
-
-  root_block_device {
-    volume_type           = "gp3"
-    volume_size           = 20
-    delete_on_termination = true
-  }
-
-  ebs_block_device {
-    device_name = "/dev/sdf"
-    volume_id   = aws_ebs_volume.workspace.id
-  }
 
   user_data = <<EOF
   #!/bin/bash
@@ -32,35 +21,18 @@ resource "aws_instance" "gpu_instance" {
   sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
 
   # stable-diffusion-webui
-  if [ ! -e /dev/sdf/stable-diffusion-webui ]; then
-    cd /dev/sdf
-    sudo -u ubuntu git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
-    sudo -u ubuntu nohup bash -c 'bash <(wget -qO- https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh) &> sd-webui-log.txt' &
-  fi
+  cd /home/ubuntu
+  sudo -u ubuntu git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
+  sudo -u ubuntu nohup bash -c 'bash <(wget -qO- https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh) &> sd-webui-log.txt' &
 
   # file-browser
-  if [ ! -e /dev/sdf/file-browser ]; then
-    cd /dev/sdf
-    sudo -u ubuntu curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
-    sudo -u ubuntu nohup bash -c 'filebrowser -r /home/ubuntu &> ./browser-log.txt' &
-  fi
+  cd /home/ubuntu
+  sudo -u ubuntu curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
+  sudo -u ubuntu nohup bash -c 'filebrowser -r /home/ubuntu &> ./browser-log.txt' &
 
   EOF
 
   tags = {
     Name = "gpu-instance"
-  }
-}
-
-# EBS
-resource "aws_ebs_volume" "workspace" {
-  availability_zone = "ap-northeast-1"
-  type              = "gp3"
-  size              = 50
-  encrypted         = true
-
-
-  tags = {
-    Name = "stable-diffusion-workspace"
   }
 }

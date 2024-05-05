@@ -13,7 +13,7 @@ variable "iam_policy_arns" {
   type        = set(string)
 }
 
-variable "enabled" {
-  description = "モジュールを有効化するか"
+variable "instance_enabled" {
+  description = "GPUインスタンスを有効化するか"
   type        = bool
 }

@@ -19,9 +19,9 @@ module "ec2" {
 module "gpu-instance" {
   source = "./modules/gpu-instance"
 
-  enabled   = false
-  subnet_id = module.vpc.public_subnet_id
-  vpc_id    = module.vpc.vpc_id
+  instance_enabled = true
+  subnet_id        = module.vpc.public_subnet_id
+  vpc_id           = module.vpc.vpc_id
 
   iam_policy_arns = [
     module.s3_stable_diffusion.read_write_policy_arn
